@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tab-bar {
+            display: flex;
+        }
+
+        .tab {
+            padding: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            margin-right: 5px;
+        }
+
+        .tab.active {
+            background-color: #ddd;
+        }
+
+        .content-container {
+            margin-top: 20px;
+            width: 400px;
+            height: 200px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tab-container">
+        <div class="tab-bar">
+            <div class="tab active" onclick="switchTab(0)">TAB 1 &nbsp; &nbsp; &nbsp; <button onclick="close(0)"
+                    id="closebutton">x</button>
+            </div>
+        </div>
+        <button id="addTabButton" onclick="addTab()">+</button>
+
+        <div class="content-container" id="content-1">
+            <div class="container" style="">
+
+
+                <div class="container-iner"> <span id="inner-box" style="border: 2px solid #0000;">Gender</span>
+                    <span>
+                        <input label="gender" placeholder="gender"></span>
+                </div>
+
+                <br />
+                <div class="container-inner"> <span id="inner-box">Name</span> <span> <input label="name"
+                            placeholder="name"></span> </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        let tabs = [
+            {
+                name: 'TAB 1',
+                content: 'Tab 1 content'
+            }
+        ];
+
+        let tabCount = 1;
+
+        function addTab() {
+            if (tabCount <= 5) {
+                const tabContainer = document.querySelector('.tab-container');
+
+                // Create tab
+                const newTab = document.createElement('div');
+                newTab.className = 'tab';
+                newTab.innerHTML = 'TAB ' + (tabCount + 1) + '&nbsp;&nbsp;&nbsp;';
+
+                // Create close button
+                const closeButton = document.createElement('button');
+                closeButton.textContent = 'x';
+                closeButton.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    close(tabCount - 1);
+                });
+
+                // Append close button to tab
+                newTab.appendChild(closeButton);
+                newTab.setAttribute("onclick", `switchTab(${tabCount});`);
+
+
+                tabContainer.querySelector('.tab-bar').appendChild(newTab);
+
+                // Create content container
+                const contentContainer = document.createElement('div');
+                contentContainer.className = 'content-container';
+                contentContainer.id = 'content-' + (tabCount + 1);
+                contentContainer.textContent = 'Tab ' + (tabCount + 1) + ' content';
+                tabContainer.appendChild(contentContainer);
+
+                // Add tab info to the array
+                tabs.push({
+                    name: 'TAB ' + (tabCount + 1),
+                    content: 'Tab ' + (tabCount + 1) + ' content'
+                });
+
+                tabCount++;
+
+                // Hide add button if max tabs reached
+                if (tabCount === 5) {
+                    document.getElementById('addTabButton').style.display = 'none';
+                }
+
+                if (tabCount === 1) {
+                    document.getElementById('closebutton').style.display = 'none';
+                }
+            }
+        }
+
+        function close(tabIndex) {
+            tabs.splice(tabIndex, 1);
+            const tabContainer = document.querySelector('.tab-container');
+            const tab = tabContainer.querySelector('.tab-bar').children[tabIndex];
+            const contentContainer = document.getElementById('content-' + (tabIndex + 1));
+            tabContainer.querySelector('.tab-bar').removeChild(tab);
+            tabContainer.removeChild(contentContainer);
+            tabCount--;
+
+            // Update the active tab if the deleted tab was active
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab === tab) {
+                switchTab(0);
+            }
+
+            // Show add button if less than 5 tabs
+            if (tabCount < 5) {
+                document.getElementById('addTabButton').style.display = 'block';
+            }
+
+            if (tabCount > 1) {
+                document.getElementById('addTabButton').style.display = 'block';
+            }
+
+
+        }
+
+        function switchTab(tabIndex) {
+            const contentContainers = document.querySelectorAll('.content-container');
+
+            contentContainers.forEach(contentContainer => {
+                contentContainer.style.display = 'none';
+            });
+
+            const activeContentContainer = document.getElementById('content-' + (tabIndex + 1));
+            activeContentContainer.style.display = 'block';
+
+            const activeTab = document.querySelectorAll('.tab')[tabIndex];
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            activeTab.classList.add('active');
+        }
+    </script>
+
+</body>
+
+</html>
